@@ -1,67 +1,69 @@
-# app.py
-
 import streamlit as st
 from transformers import pipeline
+import random
+import re
 
-# Load the sentiment analysis pipeline
+# Load sentiment analysis model
 sentiment_pipeline = pipeline("sentiment-analysis")
 
-# Function to analyze sentiment
-def analyze_sentiment(text):
-    result = sentiment_pipeline(text)[0]
-    label = result['label']
-    score = result['score']
-    return label, score
-
-# Function to get suggestions/motivational quotes
+# Motivational messages based on sentiment
 def get_motivation(label):
-    quotes = {
+    messages = {
         "POSITIVE": [
-            "Keep shining, you're doing amazing! ✨",
-            "Every day is a new opportunity to grow! 🌱",
-            "Stay positive and keep pushing forward! 🚀"
+            "That's wonderful to hear! Keep embracing the good moments.",
+            "Your positivity is powerful — let it shine!",
+            "Keep going! You're doing amazing, even if it doesn’t always feel that way."
         ],
         "NEGATIVE": [
-            "It's okay to feel this way. You're not alone. 🌧️",
-            "Take a deep breath. Things will get better. 🌈",
-            "You're stronger than you think. Don't give up. 💪"
+            "It's okay to feel this way. You're not alone.",
+            "Hard times don’t last forever. You’re stronger than you think.",
+            "Even on the toughest days, your feelings are valid. Take it one step at a time."
         ],
         "NEUTRAL": [
-            "Stay steady. Peace of mind is power. ☯️",
-            "Everything happens for a reason. Trust the process. 🔄",
-            "Let go of what you can't control. 🌿"
+            "Sometimes, just getting through the day is enough. Keep it up.",
+            "Stay steady — peace of mind is power.",
+            "You're doing fine. Be gentle with yourself."
         ]
     }
-    # Return a random quote from the label group
-    import random
-    return random.choice(quotes.get(label, quotes["NEUTRAL"]))
+    return random.choice(messages.get(label, messages["NEUTRAL"]))
 
-# Streamlit UI
-st.set_page_config(page_title="Mental Health Chat Analyzer", page_icon="🕊️")
+# Analyze sentiment of a sentence
+def analyze_sentiment(text):
+    result = sentiment_pipeline(text)[0]
+    return result['label'], result['score']
+
+# Streamlit app layout
+st.set_page_config(page_title="Mental Health Chat Analyzer", page_icon="💬")
 
 st.title("🕊️ Mental Health Chat Analyzer")
-st.markdown("Type how you feel below. Get a sentiment analysis and receive motivational support. ❤️")
+st.write("Tell us how you're feeling today. Get caring, motivating responses in return. 💖")
 
-user_input = st.text_area("💬 How are you feeling today?", height=150)
+# User input
+user_input = st.text_area("💬 How are you feeling?", height=180)
 
-if st.button("Analyze"):
+# Process and respond
+if st.button("Analyze My Emotion"):
     if user_input.strip():
-        label, score = analyze_sentiment(user_input)
-        
-        # Display sentiment
-        st.subheader("📝 Sentiment Analysis Result")
-        st.write(f"**Sentiment:** {label}")
-        st.write(f"**Confidence Score:** {score:.2f}")
+        st.subheader("💡 Your Emotional Support")
 
-        # Show motivational message
-        st.subheader("💡 Suggestion / Motivation")
-        st.success(get_motivation(label))
+        # Break input into lines/sentences
+        lines = re.split(r'[.!?\n]', user_input)
+        lines = [line.strip() for line in lines if line.strip()]
+
+        for line in lines:
+            label, score = analyze_sentiment(line)
+            motivation = get_motivation(label)
+
+            st.write(f"**You shared:** _{line}_")
+            st.write(f"**Response:** {motivation}")
+            st.write("---")
     else:
-        st.warning("Please type something to analyze.")
+        st.warning("Please type something before clicking the button.")
 
 # Footer
-st.markdown("---")
-st.markdown("Made with ❤️ by [Your Name] | Powered by Hugging Face & Streamlit")
+st.write("Made with ❤️ using Streamlit and Transformers")
+
+ 
 
       
 
