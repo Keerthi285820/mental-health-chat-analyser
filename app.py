@@ -29,7 +29,7 @@ def get_motivation(label):
 # Set up Streamlit app
 st.set_page_config(page_title="Mental Health Chat Analyzer", page_icon="💬")
 st.title("🕊️ Mental Health Chat Analyzer")
-st.write("Tell us how you're feeling today, and we'll respond to each thought with motivation and care.")
+st.write("Tell us how you're feeling today, and we'll respond to each thought with motivation and care 💖.")
 
 # User input
 user_input = st.text_area("💬 How are you feeling today?", height=200)
