@@ -2,12 +2,12 @@ import streamlit as st
 from transformers import pipeline
 import random
 
-# Load the sentiment analysis pipeline
+# Load the sentiment analysis model
 sentiment_pipeline = pipeline("sentiment-analysis")
 
-# Define motivational responses
+# Motivational message generator
 def get_motivation(label):
-    responses = {
+    messages = {
         "POSITIVE": [
             "That's wonderful to hear! Keep embracing the good moments.",
             "Your positivity is powerful — let it shine!",
@@ -24,35 +24,36 @@ def get_motivation(label):
             "You're doing fine. Be gentle with yourself."
         ]
     }
-    return random.choice(responses.get(label, responses["NEUTRAL"]))
+    return random.choice(messages.get(label, messages["NEUTRAL"]))
 
-# Page setup
+# Set up Streamlit app
 st.set_page_config(page_title="Mental Health Chat Analyzer", page_icon="💬")
 st.title("🧠 Mental Health Chat Analyzer")
-st.write("Tell us how you're feeling. We'll respond to each thought with kindness and support. 💖")
+st.write("Tell us how you're feeling today, and we'll respond to each thought with motivation and care.")
 
-# Text input
+# User input
 user_input = st.text_area("💬 How are you feeling today?", height=200)
 
-# Analyze button
+# On click
 if st.button("Analyze My Emotion"):
     if user_input.strip():
-        st.subheader("💡 Supportive Replies")
+        st.subheader("💡 Your Emotional Support")
 
-        # ✅ Split by newline only (you asked for real interaction line by line)
+        # Split input by lines (each line = 1 thought)
         lines = user_input.strip().split('\n')
         lines = [line.strip() for line in lines if line.strip()]
 
-        # Loop through each line
         for line in lines:
-            label, score = sentiment_pipeline(line)[0]['label'], sentiment_pipeline(line)[0]['score']
+            result = sentiment_pipeline(line)[0]  # ✅ CALL ONCE ONLY
+            label = result['label']
+            score = result['score']
             response = get_motivation(label)
 
-            # Output
-            st.write(f"**You shared:** _{line}_")
-            st.write(f"**Response:** {response}")
+            st.markdown(f"**🧠 You shared:** _{line}_")
+            st.markdown(f"**💬 Response:** {response}")
             st.markdown("---")
     else:
-        st.warning("Please type something to analyze.")
+        st.warning("Please type something above before analyzing.")
 
-
+            
+    
