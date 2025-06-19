@@ -37,9 +37,9 @@ def get_motivation(label):
     return random.choice(quotes.get(label, quotes["NEUTRAL"]))
 
 # Streamlit UI
-st.set_page_config(page_title="Mental Health Chat Analyzer", page_icon="🕊️	")
+st.set_page_config(page_title="Mental Health Chat Analyzer", page_icon="🕊️")
 
-st.title("🧠 Mental Health Chat Analyzer")
+st.title("🕊️ Mental Health Chat Analyzer")
 st.markdown("Type how you feel below. Get a sentiment analysis and receive motivational support. ❤️")
 
 user_input = st.text_area("💬 How are you feeling today?", height=150)
