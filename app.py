@@ -6,7 +6,7 @@ import re
 # Load sentiment analysis model
 sentiment_pipeline = pipeline("sentiment-analysis")
 
-# Motivational messages based on sentiment
+# Get motivational response
 def get_motivation(label):
     messages = {
         "POSITIVE": [
@@ -27,43 +27,38 @@ def get_motivation(label):
     }
     return random.choice(messages.get(label, messages["NEUTRAL"]))
 
-# Analyze sentiment of a sentence
+# Analyze one sentence
 def analyze_sentiment(text):
     result = sentiment_pipeline(text)[0]
     return result['label'], result['score']
 
-# Streamlit app layout
+# Streamlit UI
 st.set_page_config(page_title="Mental Health Chat Analyzer", page_icon="💬")
 
 st.title("🕊️ Mental Health Chat Analyzer")
-st.write("Tell us how you're feeling today. Get caring, motivating responses in return. 💖")
+st.write("Tell us how you're feeling today, and we'll respond with motivation and support.")
 
 # User input
-user_input = st.text_area("💬 How are you feeling?", height=180)
+user_input = st.text_area("💬 How are you feeling today?", height=180)
 
-# Process and respond
+# When user clicks Analyze
 if st.button("Analyze My Emotion"):
     if user_input.strip():
         st.subheader("💡 Your Emotional Support")
 
-        # Break input into lines/sentences
+        # ✅ Split input into separate lines/sentences
         lines = re.split(r'[.!?\n]', user_input)
         lines = [line.strip() for line in lines if line.strip()]
 
+        # Analyze each line separately
         for line in lines:
             label, score = analyze_sentiment(line)
             motivation = get_motivation(label)
 
+            # Show result
             st.write(f"**You shared:** _{line}_")
             st.write(f"**Response:** {motivation}")
-            st.write("---")
+            st.markdown("---")
     else:
-        st.warning("Please type something before clicking the button.")
-
-# Footer
-st.write("Made with ❤️ using Streamlit and Transformers")
-
- 
-
-      
+        st.warning("Please enter how you're feeling to get started.")
 
